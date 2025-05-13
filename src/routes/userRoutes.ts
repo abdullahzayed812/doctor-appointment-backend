@@ -1,8 +1,9 @@
 import express from "express";
-import { authMiddleware, userController } from "../container";
+import { userController } from "../container";
 
 const router = express.Router();
 
-router.post("/register", authMiddleware.authenticate, authMiddleware.authorize(["patient"]), userController.register);
+router.post("/register", userController.register);
+router.post("/login", userController.login);
 
 export default router;
