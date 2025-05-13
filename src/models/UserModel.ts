@@ -26,13 +26,12 @@ export class UserModel {
     await this.db.execute("DELETE FROM users WHERE id = ?", [id]);
   }
 
-  async createUser(data: { name: string; email: string; password: string; role?: string }): Promise<number> {
-    const { name, email, password, role = "patient" } = data;
+  async createUser(name: string, email: string, password: string, role?: string): Promise<number> {
     const result = await this.db.execute("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)", [
       name,
       email,
       password,
-      role,
+      role ?? "patient",
     ]);
     return result.insertId;
   }

@@ -1,4 +1,5 @@
 import { RowDataPacket } from "mysql2";
+import { LoginResponse } from "./apis";
 
 export interface IUser extends RowDataPacket {
   id: number;
@@ -11,6 +12,8 @@ export interface IUser extends RowDataPacket {
 
 export interface IUserService {
   registerUser(name: string, email: string, password: string, role?: string): Promise<number>;
+
+  loginUser(email: string, password: string): Promise<LoginResponse>;
 
   findUserByEmail(email: string): Promise<IUser | null>;
 
