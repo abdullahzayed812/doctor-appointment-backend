@@ -9,10 +9,6 @@ import { checkRequiredEnvVars } from "./utils/checkEnvVars";
 
   checkRequiredEnvVars(["ENV", "PORT", "DB_HOST", "DB_USER", "DB_PASSWORD", "DB_NAME"]);
 
-  // await runMigrations(migrationsPath, ecommerceDB);
-  // await runSeeds(seedsPath, ecommerceDB);
-  // console.log("✅ Ecommerce DB is ready");
-
   const server = await createServer();
 
   server.listen(PORT, () => console.log(`Listening on port ${PORT} in ${ENV} environment.`));

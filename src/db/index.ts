@@ -30,29 +30,63 @@ export class Database {
 
   public static async runMigrations() {
     const pool = this.getInstance();
+
+    // Ensure migrations_log table exists
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS migrations_log (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     const migrationPath = path.join(__dirname, "migrations");
     const files = fs.readdirSync(migrationPath).sort();
 
     for (const file of files) {
-      const sql = fs.readFileSync(path.join(migrationPath, file), "utf8");
-      console.log(`Running migration: ${file}`);
-      await pool.query(sql);
+      const [rows] = await pool.query("SELECT 1 FROM migrations_log WHERE name = ?", [file]);
+
+      if ((rows as any[]).length === 0) {
+        const sql = fs.readFileSync(path.join(migrationPath, file), "utf8");
+        console.log(`▶ Running migration: ${file}`);
+        await pool.query(sql);
+        await pool.query("INSERT INTO migrations_log (name) VALUES (?)", [file]);
+      } else {
+        console.log(`✔ Skipping already applied migration: ${file}`);
+      }
     }
 
-    console.log("✅ Migrations completed.");
+    console.log("✅ Migrations check completed.");
   }
 
   public static async runSeeds() {
     const pool = this.getInstance();
+
+    // Ensure seeds_log table exists
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS seeds_log (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     const seedPath = path.join(__dirname, "seeds");
     const files = fs.readdirSync(seedPath).sort();
 
     for (const file of files) {
-      const sql = fs.readFileSync(path.join(seedPath, file), "utf8");
-      console.log(`Seeding data: ${file}`);
-      await pool.query(sql);
+      const [rows] = await pool.query("SELECT 1 FROM seeds_log WHERE name = ?", [file]);
+
+      if ((rows as any[]).length === 0) {
+        const sql = fs.readFileSync(path.join(seedPath, file), "utf8");
+        console.log(`▶ Seeding data: ${file}`);
+        await pool.query(sql);
+        await pool.query("INSERT INTO seeds_log (name) VALUES (?)", [file]);
+      } else {
+        console.log(`✔ Skipping already applied seed: ${file}`);
+      }
     }
 
-    console.log("✅ Seeding completed.");
+    console.log("✅ Seeding check completed.");
   }
 }
