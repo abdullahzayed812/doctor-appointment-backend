@@ -6,11 +6,10 @@ import { fileURLToPath } from "node:url";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 export class Database {
   private static instance: Pool;
+  private static readonly __filename = fileURLToPath(import.meta.url);
+  private static readonly __dirname = path.dirname(this.__filename);
 
   private constructor() {}
 
@@ -40,7 +39,7 @@ export class Database {
       );
     `);
 
-    const migrationPath = path.join(__dirname, "migrations");
+    const migrationPath = path.join(this.__dirname, "migrations");
     const files = fs.readdirSync(migrationPath).sort();
 
     for (const file of files) {
