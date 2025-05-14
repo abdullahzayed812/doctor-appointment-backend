@@ -1,10 +1,10 @@
-import { IUserService } from "../types/User";
-import { ExpressHandler, LoginRequestBody, LoginResponse, RegisterRequestBody, RegisterResponse } from "../types/apis";
+import { IAuthService } from "../services/AuthService";
+import { ExpressHandler, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "../types/apis";
 
-export class UserController {
-  constructor(private userService: IUserService) {}
+export class AuthController {
+  constructor(private userService: IAuthService) {}
 
-  public register: ExpressHandler<RegisterRequestBody, RegisterResponse> = async (req, res) => {
+  public register: ExpressHandler<RegisterRequest, RegisterResponse> = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
@@ -20,7 +20,7 @@ export class UserController {
     }
   };
 
-  public login: ExpressHandler<LoginRequestBody, LoginResponse> = async (req, res) => {
+  public login: ExpressHandler<LoginRequest, LoginResponse> = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {

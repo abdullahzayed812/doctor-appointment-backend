@@ -1,10 +1,18 @@
-import { UserModel } from "../models/UserModel";
 import bcrypt from "bcrypt";
-import { IUserService } from "../types/User";
 import { JwtPayload, JwtService } from "./JwtService";
+import { AuthModel } from "../models/AuthModel";
+import { LoginResponse } from "../types/apis";
+import { IUser } from "../types/entities";
 
-export class UserService implements IUserService {
-  constructor(private userModel: UserModel, private jwtService: JwtService) {}
+export interface IAuthService {
+  registerUser(name: string, email: string, password: string, role?: string): Promise<number>;
+  loginUser(email: string, password: string): Promise<LoginResponse>;
+  findUserByEmail(email: string): Promise<IUser | null>;
+  deleteUser(id: number): Promise<void>;
+}
+
+export class AuthService implements IAuthService {
+  constructor(private userModel: AuthModel, private jwtService: JwtService) {}
 
   async registerUser(name: string, email: string, password: string, role?: string): Promise<number> {
     const hashedPassword = await bcrypt.hash(password, 10);

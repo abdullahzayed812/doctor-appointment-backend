@@ -1,7 +1,7 @@
-import { IUser } from "../types/User";
+import { IUser } from "../types/entities";
 import { DBClient } from "../utils/DBClient";
 
-export class UserModel {
+export class AuthModel {
   private db: DBClient;
 
   constructor() {
